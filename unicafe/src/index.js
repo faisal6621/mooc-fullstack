@@ -17,6 +17,10 @@ const App = () => {
     const addNeutral = () => setNeutral(neutral + 1)
     const addBad = () => setBad(bad + 1)
 
+    const getTotal = () => good + neutral + bad
+    const getAverage = () => (good - bad) / getTotal()
+    const getPositive = () => (good / getTotal()) * 100
+
     return (
         <div>
             <h1>give feedback</h1>
@@ -30,6 +34,9 @@ const App = () => {
                 <p>good {good}</p>
                 <p>neutral {neutral}</p>
                 <p>bad {bad}</p>
+                <p>all {getTotal()}</p>
+                <p>average {getAverage()}</p>
+                <p>positive {getPositive()} %</p>
             </div>
 
         </div>
