@@ -1,33 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-
-const Course = ({ course }) => {
-    return (
-        <div>
-            <Header course={course.name} />
-            <Content parts={course.parts} />
-            <Total parts={course.parts} />
-        </div>
-    )
-}
-
-const Courses = ({ courses }) =>
-    courses.map(course => <Course key={course.id} course={course} />)
-
-const Header = ({ course }) =>
-    <h1>{course}</h1>
-
-const Part = ({ part }) =>
-    <p>{part.name} {part.exercises}</p>
-
-const Content = ({ parts }) =>
-    parts.map(part => <Part key={part.id} part={part} />)
-
-const Total = ({ parts }) => {
-    const total = parts.map(part => part.exercises).reduce((a, b) => a + b, 0)
-    return (<b>total of {total} exercises</b>)
-}
+import Course from "./components/Course";
 
 const App = () => {
     const courses = [
@@ -50,7 +24,7 @@ const App = () => {
     ]
 
     return (
-        <Courses courses={courses} />
+        courses.map(course => <Course key={course.id} course={course} />)
     )
 }
 ReactDOM.render(<App />, document.getElementById('root'));
