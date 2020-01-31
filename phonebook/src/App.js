@@ -1,5 +1,28 @@
 import React, { useState } from "react";
 
+const Filter = ({ filterName, updateFilterName }) =>
+    <div>
+        filter shown with <input value={filterName}
+            onChange={event => updateFilterName(event.target.value)} />
+    </div>
+
+
+const PersonForm = ({ addPerson, newName, setNewName, newNumber, setNewNumber }) =>
+    <form onSubmit={addPerson}>
+        <div>name: <input value={newName}
+            onChange={event => setNewName(event.target.value)} />
+        </div>
+        <div>number: <input value={newNumber}
+            onChange={event => setNewNumber(event.target.value)} /></div>
+        <div>
+            <button type="submit">add</button>
+        </div>
+    </form>
+
+const Persons = ({ persons, filterName }) =>
+    persons.filter(person => person.name.toLowerCase().startsWith(filterName.toLowerCase()))
+        .map(person => <Number key={person.name} person={person} />)
+
 const Number = ({ person }) =>
     <p>{person.name} {person.number}</p>
 
@@ -33,24 +56,12 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <div>
-                filter shown with <input value={filterName}
-                    onChange={event => setFilterName(event.target.value)} />
-            </div>
+            <Filter filterName={filterName} updateFilterName={setFilterName} />
             <h2>add a new</h2>
-            <form onSubmit={addPerson}>
-                <div>name: <input value={newName}
-                    onChange={event => setNewName(event.target.value)} />
-                </div>
-                <div>number: <input value={newNumber}
-                    onChange={event => setNewNumber(event.target.value)} /></div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
+            <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber}
+                setNewName={setNewName} setNewNumber={setNewNumber} />
             <h2>Numbers</h2>
-            {persons.filter(person => person.name.toLowerCase().startsWith(filterName.toLowerCase()))
-                .map(person => <Number key={person.name} person={person} />)}
+            <Persons persons={persons} filterName={filterName} />
         </div>
     )
 }
