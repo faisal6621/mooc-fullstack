@@ -20,12 +20,14 @@ const PersonForm = ({ addPerson, newName, setNewName, newNumber, setNewNumber })
         </div>
     </form>
 
-const Persons = ({ persons, filterName }) =>
-    persons.filter(person => person.name.toLowerCase().startsWith(filterName.toLowerCase()))
-        .map(person => <Number key={person.name} person={person} />)
+const Number = ({ person, remove }) =>
+    <p>{person.name} {person.number}
+        <button onClick={() => remove(person)}>delete</button></p>
 
-const Number = ({ person }) =>
-    <p>{person.name} {person.number}</p>
+const Persons = ({ persons, filterName, removePerson }) =>
+    persons.filter(person => person.name.toLowerCase().startsWith(filterName.toLowerCase()))
+        .map(person => <Number key={person.name} person={person}
+            remove={removePerson} />)
 
 const App = () => {
     const [filterName, setFilterName] = useState('')
@@ -55,6 +57,16 @@ const App = () => {
         }
     }
 
+    const removePerson = person => {
+        const agree = window.confirm(`Delete ${person.name}`)
+        if (agree) {
+            PhoneBook.remove(person.id)
+                .then(removedId => {
+                    setPersons(persons.filter(person => person.id !== removedId))
+                })
+        }
+    }
+
     return (
         <div>
             <h2>Phonebook</h2>
@@ -63,7 +75,7 @@ const App = () => {
             <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber}
                 setNewName={setNewName} setNewNumber={setNewNumber} />
             <h2>Numbers</h2>
-            <Persons persons={persons} filterName={filterName} />
+            <Persons persons={persons} filterName={filterName} removePerson={removePerson} />
         </div>
     )
 }
