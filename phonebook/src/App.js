@@ -43,13 +43,27 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault()
-        const newPerson = {
-            name: newName,
-            number: newNumber
-        }
-        if (persons.find(person => person.name === newName)) {
-            alert(`${newName} is already added to phonebook`)
+
+        const foundPerson = persons.find(person => person.name === newName)
+        if (foundPerson) {
+            const agree = window.confirm(
+                `${newName} is already added to phonebook, replace the old number with a new one?`)
+            if (agree) {
+                PhoneBook.update(foundPerson.id, { ...foundPerson, number: newNumber })
+                    .then(updatedPerson => {
+                        setPersons(persons.map(person =>
+                            person.id === updatedPerson.id ? updatedPerson : person))
+                    })
+                    .catch(error => {
+                        alert("some error occured. see console for details")
+                        console.log(error)
+                    })
+            }
         } else {
+            const newPerson = {
+                name: newName,
+                number: newNumber
+            }
             PhoneBook.create(newPerson)
                 .then(person => setPersons(persons.concat(person)))
             setNewName('')
