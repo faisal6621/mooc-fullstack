@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import PhoneBook from "./service/PhoneBook";
 
+const Notification = ({ message, className }) =>
+    <div className={className}>
+        {message}
+    </div>
+
 const Filter = ({ filterName, updateFilterName }) =>
     <div>
         filter shown with <input value={filterName}
@@ -30,6 +35,8 @@ const Persons = ({ persons, filterName, removePerson }) =>
             remove={removePerson} />)
 
 const App = () => {
+    const [message, setMessage] = useState('')
+    const [className, setClassName] = useState('')
     const [filterName, setFilterName] = useState('')
 
     const [persons, setPersons] = useState([])
@@ -53,9 +60,16 @@ const App = () => {
                     .then(updatedPerson => {
                         setPersons(persons.map(person =>
                             person.id === updatedPerson.id ? updatedPerson : person))
+                        setNewName('')
+                        setNewNumber('')
+                        setMessage(`${newName}'s number updated`)
+                        setClassName('success')
+                        setTimeout(clearMessage, 5000)
                     })
                     .catch(error => {
-                        alert("some error occured. see console for details")
+                        setMessage("some error occured. see console for details")
+                        setClassName('error')
+                        setTimeout(clearMessage, 5000)
                         console.log(error)
                     })
             }
@@ -68,6 +82,9 @@ const App = () => {
                 .then(person => setPersons(persons.concat(person)))
             setNewName('')
             setNewNumber('')
+            setMessage(`Added ${newName}`)
+            setClassName('success')
+            setTimeout(clearMessage, 5000)
         }
     }
 
@@ -81,9 +98,15 @@ const App = () => {
         }
     }
 
+    const clearMessage = () => {
+        setMessage('')
+        setClassName('')
+    }
+
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={message} className={className} />
             <Filter filterName={filterName} updateFilterName={setFilterName} />
             <h2>add a new</h2>
             <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber}
