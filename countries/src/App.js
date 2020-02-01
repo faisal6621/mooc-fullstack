@@ -27,7 +27,7 @@ const App = () => {
   }, [])
 
   const filteredCountries = countries
-    .filter(c => country !== '' && c.name.toLowerCase().startsWith(country.toLowerCase()))
+    .filter(c => country !== '' && c.name.toLowerCase().includes(country.toLowerCase()))
     .reduce((a, b) => a.concat(b), [])
 
   if (filteredCountries.length > 10) {
@@ -51,7 +51,13 @@ const App = () => {
     return (
       <div className="App">
         <Filter country={country} setCountry={setCountry} />
-        {filteredCountries.map(country => <p key={country.name}>{country.name}</p>)}
+        {filteredCountries.map(country => {
+          return (
+            <p key={country.name}>{country.name}
+              <button onClick={() => setCountry(country.name)} >show</button>
+            </p>
+          )
+        })}
       </div>
     )
   }
