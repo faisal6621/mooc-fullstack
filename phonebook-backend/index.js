@@ -42,9 +42,20 @@ app.get('/api/persons', (req, resp) => {
     resp.json(persons)
 })
 
+app.get('/api/persons/:id', (req, resp) => {
+    const id = Number(req.params.id);
+    const person = persons.find(person => person.id === id);
+    if (person) {
+        resp.json(person)
+    } else {
+        resp.status(404).end()
+    }
+})
+
 app.get('/info', (req, resp) => {
     resp.send(`Phonebook has info for ${persons.length} peoples<br/>${new Date()}`)
 })
+
 const port = 3001;
 app.listen(port, () => {
     console.log(`server started listening on port ${port}`)
