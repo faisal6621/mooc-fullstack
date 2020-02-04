@@ -1,7 +1,7 @@
-const express = require('express');
+const express = require('express')
 const app = express()
 
-const persons = [
+let persons = [
     {
         "name": "Arto Hellas",
         "number": "040-123456",
@@ -36,15 +36,15 @@ const persons = [
 
 app.get('/', (req, resp) => {
     resp.send('<b>Hello World</b>')
-});
+})
 
 app.get('/api/persons', (req, resp) => {
     resp.json(persons)
 })
 
 app.get('/api/persons/:id', (req, resp) => {
-    const id = Number(req.params.id);
-    const person = persons.find(person => person.id === id);
+    const id = Number(req.params.id)
+    const person = persons.find(person => person.id === id)
     if (person) {
         resp.json(person)
     } else {
@@ -52,11 +52,17 @@ app.get('/api/persons/:id', (req, resp) => {
     }
 })
 
+app.delete('/api/persons/:id', (req, resp) => {
+    const id = Number(req.params.id)
+    persons = persons.filter(person => person.id !== id)
+    resp.status(204).end()
+})
+
 app.get('/info', (req, resp) => {
     resp.send(`Phonebook has info for ${persons.length} peoples<br/>${new Date()}`)
 })
 
-const port = 3001;
+const port = 3001
 app.listen(port, () => {
     console.log(`server started listening on port ${port}`)
 })
