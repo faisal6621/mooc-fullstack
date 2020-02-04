@@ -5,3 +5,12 @@ GET http://localhost:3001/info/
 
 ###
 DELETE http://localhost:3001/api/persons/7 HTTP/1.1
+
+###
+POST http://localhost:3001/api/persons/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "name":"Martin Fowler",
+    "number":"6543789120"
+}
