@@ -1,0 +1,4 @@
+GET https://lit-ridge-49686.herokuapp.com/api/persons/
+
+###
+GET http://lit-ridge-49686.herokuapp.com/info/
