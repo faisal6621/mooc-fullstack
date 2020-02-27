@@ -34,29 +34,26 @@ app.get('/api/persons', (req, resp) => {
 })
 
 app.post('/api/persons', (req, resp) => {
-    const person = req.body
+    const person = new Person({
+        name: req.body.name,
+        number: req.body.number
+    })
+    console.log(person)
+
     if (!person.name) {
         return resp.status(400).json({
             error: "person's name is missing"
         })
-    } else {
-        const existingPerson = persons.find(p =>
-            p.name.toLowerCase() === person.name.toLowerCase())
-        if (existingPerson) {
-            return resp.status(400).json({
-                error: `${person.name} already exists`
-            })
-        }
     }
     if (!person.number) {
         return resp.status(400).json({
             error: "person's number is missing"
         })
     }
-    person.id = Math.floor(Math.random() * 1000000000)
-    console.log(person)
-    persons = persons.concat(person)
-    resp.json(person)
+
+    person.save().then(savedPerson => {
+        resp.json(savedPerson.toJSON())
+    })
 })
 
 app.get('/api/persons/:id', (req, resp) => {
@@ -77,7 +74,9 @@ app.delete('/api/persons/:id', (req, resp) => {
 })
 
 app.get('/info', (req, resp) => {
-    resp.send(`Phonebook has info for ${persons.length} peoples<br/>${new Date()}`)
+    Person.find({})
+        .then(persons =>
+            resp.send(`Phonebook has info for ${persons.length} peoples<br/>${new Date()}`))
 })
 
 const port = process.env.PORT || 3001
