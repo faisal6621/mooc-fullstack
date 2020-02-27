@@ -1,7 +1,11 @@
+require('dotenv').config()
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+
+const Person = require('./models/person')
 
 morgan.token('postData', (req) => {
     if (req.method === 'POST') {
@@ -17,31 +21,6 @@ app.use(express.static('build'))
 
 let persons = [
     {
-        "name": "Arto Hellas",
-        "number": "040-123456",
-        "id": 1
-    },
-    {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": 2
-    },
-    {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": 3
-    },
-    {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": 4
-    },
-    {
-        "name": "Martin",
-        "number": "7412589630",
-        "id": 5
-    },
-    {
         "name": "Robert",
         "number": "123044005",
         "id": 7
@@ -49,7 +28,9 @@ let persons = [
 ]
 
 app.get('/api/persons', (req, resp) => {
-    resp.json(persons)
+    Person.find({}).then(result => {
+        resp.json(result.map(person => person.toJSON()))
+    })
 })
 
 app.post('/api/persons', (req, resp) => {
@@ -79,13 +60,14 @@ app.post('/api/persons', (req, resp) => {
 })
 
 app.get('/api/persons/:id', (req, resp) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-    if (person) {
-        resp.json(person)
-    } else {
-        resp.status(404).end()
-    }
+    Person.findById(req.params.id)
+        .then(person => {
+            if (person) {
+                resp.json(person.toJSON())
+            } else {
+                resp.status(404).end()
+            }
+        })
 })
 
 app.delete('/api/persons/:id', (req, resp) => {
