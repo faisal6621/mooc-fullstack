@@ -7,7 +7,7 @@ GET http://localhost:3001/api/persons/5e5426392437c519351dfc3a
 GET http://localhost:3001/info/
 
 ###
-DELETE http://localhost:3001/api/persons/7 HTTP/1.1
+DELETE http://localhost:3001/api/persons/5e58b9ab0e7f790d39f7494d HTTP/1.1
 
 ###
 POST http://localhost:3001/api/persons/ HTTP/1.1
@@ -16,4 +16,12 @@ Content-Type: application/json
 {
     "name":"Martin Fowler",
     "number":"6543789120"
+}
+
+###
+PUT http://localhost:3001/api/persons/5e57e5cd633350102013ab58 HTTP/1.1
+Content-Type: application/json
+
+{
+    "number":"5432178966"
 }
