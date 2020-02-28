@@ -102,6 +102,8 @@ const errorHandler = (error, req, resp, next) => {
 
     if (error.name === 'CastError' && error.kind === 'ObjectId') {
         return resp.status(400).send({ error: error.message })
+    } else if (error.name === 'ValidationError') {
+        return resp.status(400).json({ error: error.message })
     }
 
     next(error)

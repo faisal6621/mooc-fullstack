@@ -79,11 +79,18 @@ const App = () => {
                 number: newNumber
             }
             PhoneBook.create(newPerson)
-                .then(person => setPersons(persons.concat(person)))
-            setNewName('')
-            setNewNumber('')
-            setMessage(`Added ${newName}`)
-            setClassName('success')
+                .then(person => {
+                    setPersons(persons.concat(person))
+                    setNewName('')
+                    setNewNumber('')
+                    setMessage(`Added ${newName}`)
+                    setClassName('success')
+                })
+                .catch(error => {
+                    console.log("failed to add person", error.response.data)
+                    setMessage(error.response.data.error)
+                    setClassName('error')
+                })
             setTimeout(clearMessage, 5000)
         }
     }
