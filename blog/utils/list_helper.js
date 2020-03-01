@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const dummy = (blogs) => {
   // some code to be added later using blogs
   console.log('dummy blogs.length', blogs.length)
@@ -14,4 +16,31 @@ const favoriteBlog = (blogs) => {
   return favBlog
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog }
+const mostBlogs = (blogs) => {
+  const groupedAuthors = _.groupBy(blogs, 'author')
+  const transformed = _.transform(groupedAuthors,
+    ((result, value, key) => result.push({ author: key, blogs: value.length })),
+    [])
+  return _.maxBy(transformed, 'blogs')
+}
+
+const mostLikes = (blogs) => {
+  const groupedAuthors = _.groupBy(blogs, 'author')
+  // console.log('grouped:', groupedAuthors)
+  const transformed = _.transform(groupedAuthors,
+    ((result, value, key) => result.push(
+      {
+        author: key,
+        likes: _.reduce(value,
+          ((aggr, curr) => ({ likes: (aggr.likes + curr.likes) })),
+          { likes: 0 }).likes,
+      },
+    )),
+    [])
+  // console.log('transformed:', transformed)
+  return _.maxBy(transformed, 'likes')
+}
+
+module.exports = {
+  dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes,
+}

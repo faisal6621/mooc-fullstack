@@ -1,6 +1,6 @@
 const listHelper = require('../utils/list_helper')
 
-const emptyBlogsList = []
+const listWithNoBlog = []
 
 const listWithOneBlog = [
   {
@@ -92,13 +92,13 @@ const listWithManyBlogs = [
 ]
 
 test('dummy returns one', () => {
-  const result = listHelper.dummy(emptyBlogsList)
+  const result = listHelper.dummy(listWithNoBlog)
   expect(result).toBe(1)
 })
 
 describe('total likes', () => {
   test('of empty list is zero', () => {
-    const result = listHelper.totalLikes(emptyBlogsList)
+    const result = listHelper.totalLikes(listWithNoBlog)
     expect(result).toBe(0)
   })
 
@@ -115,7 +115,7 @@ describe('total likes', () => {
 
 describe('favorite blog', () => {
   test('is none if blog list is empty', () => {
-    const result = listHelper.favoriteBlog(emptyBlogsList)
+    const result = listHelper.favoriteBlog(listWithNoBlog)
     expect(result).toEqual({ title: '', author: '', likes: 0 })
   })
 
@@ -141,5 +141,29 @@ describe('favorite blog', () => {
       likes: 12,
       __v: 0,
     })
+  })
+})
+
+describe('most blogs', () => {
+  test('by none when empty', () => {
+    const result = listHelper.mostBlogs(listWithNoBlog)
+    expect(result).toBe(undefined)
+  })
+
+  test('by authors if any', () => {
+    const result = listHelper.mostBlogs(listWithManyBlogs)
+    expect(result).toEqual({ author: 'Robert C. Martin', blogs: 3 })
+  })
+})
+
+describe('most likes', () => {
+  test('by none when empty', () => {
+    const result = listHelper.mostLikes(listWithNoBlog)
+    expect(result).toBe(undefined)
+  })
+
+  test('by author if any', () => {
+    const result = listHelper.mostLikes(listWithManyBlogs)
+    expect(result).toEqual({ author: 'Robert C. Martin', likes: 22 })
   })
 })
