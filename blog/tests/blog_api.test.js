@@ -95,4 +95,45 @@ describe('bad requests', () => {
   })
 })
 
+describe('delete blogs', () => {
+  test('blog is deleted', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[blogsAtStart.length - 1]
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const titles = blogsAtEnd.map((blog) => blog.title)
+
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length - 1)
+    expect(titles).not.toContain(blogToDelete.title)
+  })
+})
+
+describe('put blogs', () => {
+  test('reset likes to zero', async () => {
+    const blogsInDb = await helper.blogsInDb()
+    const blogToUpdate = blogsInDb[0]
+    const response = await api.put(`/api/blogs/${blogToUpdate.id}`)
+      .send({})
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.likes).toBe(0)
+  })
+
+  test('set likes to given value', async () => {
+    const blogsInDb = await helper.blogsInDb()
+    const blogToUpdate = blogsInDb[0]
+    const likesToBe = 9
+    const response = await api.put(`/api/blogs/${blogToUpdate.id}`)
+      .send({ likes: likesToBe })
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.likes).toBe(likesToBe)
+  })
+})
+
 afterAll(() => mongoose.connection.close())
