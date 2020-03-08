@@ -26,4 +26,9 @@ test('all blogs are returned', async () => {
   expect(response.body.length).toBe(blogs.length)
 })
 
+test('each blog has id', async () => {
+  const response = await api.get('/api/blogs')
+  response.body.map((blog) => expect(blog.id).toBeDefined())
+})
+
 afterAll(() => mongoose.connection.close())
