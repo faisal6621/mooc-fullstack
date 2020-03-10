@@ -5,17 +5,20 @@ mongoose.set('useCreateIndex', true)
 
 const blogSchema = mongoose.Schema({
   title: String,
-  author: String,
   url: String,
   likes: Number,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 })
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+    // eslint-disable-next-line no-param-reassign
     returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id // eslint-disable-line no-underscore-dangle, no-param-reassign
-    delete returnedObject.__v // eslint-disable-line no-underscore-dangle, no-param-reassign
+    delete returnedObject._id // eslint-disable-line no-param-reassign
+    delete returnedObject.__v // eslint-disable-line no-param-reassign
   },
 })
 
