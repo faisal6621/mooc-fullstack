@@ -14,10 +14,15 @@ usersRouter.get('/', async (request, response, next) => {
 usersRouter.post('/', async (request, response, next) => {
   try {
     const { body } = request
+    if (body.password.length < 3) {
+      response.status(400).send({
+        error: '`password` is shorter than the minimum allowed length (3).',
+      })
+      return
+    }
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
-    console.log(`user: ${body.name} to be created. ${passwordHash}`)
     const user = new User({
       name: body.name,
       username: body.username,
