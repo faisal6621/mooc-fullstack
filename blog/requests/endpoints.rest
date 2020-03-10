@@ -10,3 +10,16 @@ Content-Type: application/json
   "url":"127.0.0.1",
   "likes":"404"
 }
+
+###
+GET http://localhost:3003/api/users/
+
+###
+POST http://localhost:3003/api/users/
+Content-Type: application/json
+
+{
+  "name":"Lea Pasquire",
+  "username":"lpasquire",
+  "password":"secret"
+}
