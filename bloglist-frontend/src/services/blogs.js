@@ -16,7 +16,6 @@ const getUsersBlogs = async () => {
     headers: { Authorization: token }
   }
   const response = await axios.get(baseUrl, config)
-  console.log('response data:', response.data)
   return response.data
 }
 

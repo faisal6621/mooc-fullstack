@@ -41,9 +41,14 @@ const App = () => {
     }
   }
 
+  const handleLogout = async (event) => {
+    window.localStorage.clear()
+    blogsService.setToken(null)
+    setUser(null)
+  }
+
   const getUsersBlogs = async () => {
     const blogs = await blogsService.getUsersBlogs()
-    console.log('app response:', blogs)
     setBlogs(blogs)
   }
 
@@ -62,6 +67,7 @@ const App = () => {
   const userBlogs = () =>
     <div>
       <h2>{user.name}</h2>
+      <div><button type="button" onClick={handleLogout}>logout</button></div>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />)}
     </div>
