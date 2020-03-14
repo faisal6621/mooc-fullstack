@@ -16,10 +16,6 @@ blogsRouter.get('/', async (request, response, next) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   const { body } = request
-  if (!body.title || !body.url) {
-    response.status(400).end()
-    return
-  }
 
   try {
     const auth = jwt.verify(request.token, process.env.SECRET);

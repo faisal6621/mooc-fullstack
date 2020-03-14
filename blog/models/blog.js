@@ -4,12 +4,14 @@ mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
 
 const blogSchema = mongoose.Schema({
-  title: String,
-  url: String,
+  title: { type: String, required: true },
+  author: { type: String, required: true },
+  url: { type: String, required: true },
   likes: Number,
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
   },
 })
 
