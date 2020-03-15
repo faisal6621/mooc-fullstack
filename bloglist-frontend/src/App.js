@@ -4,6 +4,9 @@ import blogsService from "./services/blogs";
 import Blog from './components/Blog'
 
 const App = () => {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -52,6 +55,22 @@ const App = () => {
     setBlogs(blogs)
   }
 
+  const addBlog = async (event) => {
+    event.preventDefault()
+    const blog = {
+      title, author, url,
+    }
+    try {
+      const newBlog = await blogsService.addNewBlog(blog)
+      setBlogs(blogs.concat(newBlog))
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const loginForm = () =>
     <div>
       <h2>Login</h2>
@@ -64,10 +83,28 @@ const App = () => {
       </form>
     </div>
 
+  const blogForm = () =>
+    <div>
+      <h3>create new</h3>
+      <form onSubmit={addBlog}>
+        <div>title: <input type="text" value={title}
+          onChange={({ target }) => setTitle(target.value)}
+          required /></div>
+        <div>author: <input type="text" value={author}
+          onChange={({ target }) => setAuthor(target.value)}
+          required /></div>
+        <div>url: <input type="text" value={url}
+          onChange={({ target }) => setUrl(target.value)}
+          required /></div>
+        <button type="submit">create</button>
+      </form>
+    </div>
+
   const userBlogs = () =>
     <div>
       <h2>{user.name}</h2>
       <div><button type="button" onClick={handleLogout}>logout</button></div>
+      {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />)}
     </div>
