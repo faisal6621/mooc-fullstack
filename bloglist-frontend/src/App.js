@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import loginService from "./services/login";
-import blogsService from "./services/blogs";
+import React, { useState, useEffect } from 'react'
+import loginService from "./services/login"
+import blogsService from "./services/blogs"
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 
 const App = () => {
   const [title, setTitle] = useState('')
@@ -11,6 +12,8 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState('')
+  const [msgType, setMsgType] = useState('')
 
   useEffect(() => {
     const loggedUser = window.localStorage.getItem('user')
@@ -27,6 +30,15 @@ const App = () => {
     }
   }, [user])
 
+  useEffect(() => {
+    if (message) {
+      setTimeout(() => {
+        setMessage('')
+        setMsgType('')
+      }, 5000);
+    }
+  }, [message])
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -39,8 +51,10 @@ const App = () => {
         window.localStorage.setItem('user', JSON.stringify(user))
         blogsService.setToken(user.token)
       }
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      console.error(error)
+      setMessage(error.response.data.error)
+      setMsgType('error')
     }
   }
 
@@ -51,8 +65,14 @@ const App = () => {
   }
 
   const getUsersBlogs = async () => {
-    const blogs = await blogsService.getUsersBlogs()
-    setBlogs(blogs)
+    try {
+      const blogs = await blogsService.getUsersBlogs()
+      setBlogs(blogs)
+    } catch (error) {
+      console.error(error)
+      setMessage(error.response.data.error)
+      setMsgType('error')
+    }
   }
 
   const addBlog = async (event) => {
@@ -66,8 +86,12 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      setMessage(`a new blog '${blog.title}' added`)
+      setMsgType('success')
     } catch (error) {
       console.error(error)
+      setMessage(error.response.data.error)
+      setMsgType('error')
     }
   }
 
@@ -112,6 +136,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
+      <Notification message={message} type={msgType} />
       {user === null
         ? loginForm()
         : userBlogs()}
