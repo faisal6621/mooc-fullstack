@@ -94,6 +94,20 @@ const App = () => {
     return false;
   }
 
+  const likeBlog = async (blog) => {
+    try {
+      const updatedBlog = await blogsService.updateBlogLikes(blog)
+      setBlogs(blogs.filter(blog => blog.id !== updatedBlog.id).concat(updatedBlog))
+
+      setMessage(`'${updatedBlog.title}' updated, likes ${updatedBlog.likes}`)
+      setMsgType('success')
+    } catch (error) {
+      console.error(error)
+      setMessage(error.response.data.error)
+      setMsgType('error')
+    }
+  }
+
   const loginForm = () =>
     <div>
       <h2>Login</h2>
@@ -115,7 +129,7 @@ const App = () => {
         <BlogForm addBlog={addBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />)}
+        <Blog key={blog.id} blog={blog} like={likeBlog} />)}
     </div>
 
   return (
