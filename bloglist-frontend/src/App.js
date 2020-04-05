@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import loginService from "./services/login"
-import blogsService from "./services/blogs"
-import Togglable from "./components/Togglable";
+import loginService from './services/login'
+import blogsService from './services/blogs'
+import Togglable from './components/Togglable'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
@@ -36,7 +36,7 @@ const App = () => {
       setTimeout(() => {
         setMessage('')
         setMsgType('')
-      }, 5000);
+      }, 5000)
     }
   }, [message])
 
@@ -59,7 +59,7 @@ const App = () => {
     }
   }
 
-  const handleLogout = async (event) => {
+  const handleLogout = async () => {
     window.localStorage.clear()
     blogsService.setToken(null)
     setUser(null)
@@ -91,7 +91,7 @@ const App = () => {
       setMessage(error.response.data.error)
       setMsgType('error')
     }
-    return false;
+    return false
   }
 
   const likeBlog = async (blog) => {
@@ -155,7 +155,7 @@ const App = () => {
         ? loginForm()
         : userBlogs()}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
