@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import loginService from "./services/login"
 import blogsService from "./services/blogs"
+import Togglable from "./components/Togglable";
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 
+const blogFormRef = React.createRef()
+
 const App = () => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -75,24 +76,22 @@ const App = () => {
     }
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blog = {
-      title, author, url,
-    }
+  const addBlog = async (blog) => {
     try {
       const newBlog = await blogsService.addNewBlog(blog)
       setBlogs(blogs.concat(newBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+
       setMessage(`a new blog '${blog.title}' added`)
       setMsgType('success')
+
+      blogFormRef.current.toggleVisibility()
+      return true
     } catch (error) {
       console.error(error)
       setMessage(error.response.data.error)
       setMsgType('error')
     }
+    return false;
   }
 
   const loginForm = () =>
@@ -107,28 +106,14 @@ const App = () => {
       </form>
     </div>
 
-  const blogForm = () =>
-    <div>
-      <h3>create new</h3>
-      <form onSubmit={addBlog}>
-        <div>title: <input type="text" value={title}
-          onChange={({ target }) => setTitle(target.value)}
-          required /></div>
-        <div>author: <input type="text" value={author}
-          onChange={({ target }) => setAuthor(target.value)}
-          required /></div>
-        <div>url: <input type="text" value={url}
-          onChange={({ target }) => setUrl(target.value)}
-          required /></div>
-        <button type="submit">create</button>
-      </form>
-    </div>
-
   const userBlogs = () =>
     <div>
       <h2>{user.name}</h2>
       <div><button type="button" onClick={handleLogout}>logout</button></div>
-      {blogForm()}
+      {/* blog form to be displayed here */}
+      <Togglable buttonLabel="create blog" ref={blogFormRef}>
+        <BlogForm addBlog={addBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />)}
     </div>
