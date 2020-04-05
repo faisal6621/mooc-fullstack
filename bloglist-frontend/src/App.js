@@ -108,6 +108,19 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (blogToDelete) => {
+    try {
+      await blogsService.deleteBlog(blogToDelete)
+      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+      setMessage(`'${blogToDelete.title}' is deleted successfully`)
+      setMsgType('success')
+    } catch (error) {
+      console.error(error)
+      setMessage(error.response.data.error)
+      setMsgType('error')
+    }
+  }
+
   const loginForm = () =>
     <div>
       <h2>Login</h2>
@@ -129,7 +142,9 @@ const App = () => {
         <BlogForm addBlog={addBlog} />
       </Togglable>
       {blogs.sort((blogA, blogB) => blogA.likes - blogB.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} like={likeBlog} />)}
+        <Blog key={blog.id} blog={blog} like={likeBlog}
+          canDeleteBlog={blog.user.username === user.username}
+          deleteBlog={deleteBlog} />)}
     </div>
 
   return (

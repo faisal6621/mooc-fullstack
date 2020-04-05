@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, like }) => {
-
+const Blog = ({ blog, like, canDeleteBlog, deleteBlog }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -10,6 +9,13 @@ const Blog = ({ blog, like }) => {
 
   const updateLike = () => {
     like({ ...blog, likes: (blog.likes + 1) })
+  }
+
+  const deleteOnConfirm = () => {
+    const agree = window.confirm(`Remove blog '${blog.title}' by '${blog.author}'?`)
+    if (agree) {
+      deleteBlog(blog)
+    }
   }
 
   const viewBlog = {
@@ -23,10 +29,13 @@ const Blog = ({ blog, like }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: 'solid',
+    border: canDeleteBlog ? 'solid' : 'dotted',
+    borderColor: canDeleteBlog ? 'green' : 'black',
     borderWidth: 1,
     marginBottom: 5
   }
+
+  const deleteButton = () => <button onClick={deleteOnConfirm}>delete</button>
 
   return (
     <div style={blogStyle}>
@@ -37,7 +46,8 @@ const Blog = ({ blog, like }) => {
       <p style={hideBlog}>
         {blog.url}<br />
         likes: {blog.likes} <button onClick={updateLike}>like</button><br />
-        {blog.author}
+        {blog.author}<br />
+        {canDeleteBlog && deleteButton()}
       </p>
     </div>
   )
