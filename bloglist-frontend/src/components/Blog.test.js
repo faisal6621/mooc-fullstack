@@ -6,6 +6,7 @@ import Blog from './Blog'
 
 describe('<Blog />', () => {
   let component
+  const likeHandler = jest.fn()
 
   beforeEach(() => {
     const blog = {
@@ -14,11 +15,10 @@ describe('<Blog />', () => {
       author: 'Jest',
       url: 'localhost'
     }
-    const like = jest.fn()
     const deleteBlog = jest.fn()
 
     component = render(
-      <Blog blog={blog} like={like} canDeleteBlog={false} deleteBlog={deleteBlog} />
+      <Blog blog={blog} like={likeHandler} canDeleteBlog={false} deleteBlog={deleteBlog} />
     )
   })
 
@@ -36,5 +36,14 @@ describe('<Blog />', () => {
     const blogContent = component.container.querySelector('.blogContent')
     expect(blogContent).not.toHaveStyle('display: none')
   })
+
+  test('should have liked twice', () => {
+    const likeButton = component.getByText('like')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(likeHandler.mock.calls).toHaveLength(2)
+  })
+
 
 })
