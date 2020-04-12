@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 // import { prettyDOM } from '@testing-library/dom'
 
@@ -27,6 +27,14 @@ describe('<Blog />', () => {
 
     const blogContent = component.container.querySelector('.blogContent')
     expect(blogContent).toHaveStyle('display: none')
+  })
+
+  test('should display blog content on click', () => {
+    const viewButton = component.getByText('view')
+    fireEvent.click(viewButton)
+
+    const blogContent = component.container.querySelector('.blogContent')
+    expect(blogContent).not.toHaveStyle('display: none')
   })
 
 })
