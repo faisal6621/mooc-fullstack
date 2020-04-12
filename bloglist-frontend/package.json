@@ -13,6 +13,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test (non-watch)":"CI=true npm test",
     "eject": "react-scripts eject",
     "eslint": "eslint ."
   },
@@ -33,6 +34,8 @@
   },
   "proxy": "http://localhost:3003",
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.5.0",
+    "@testing-library/react": "^10.0.2",
     "eslint-plugin-jest": "^23.8.2"
   }
 }
