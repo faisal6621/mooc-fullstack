@@ -6,7 +6,7 @@ describe('Blog app', function () {
     // create a new user
     const user = {
       name: 'Lea Pasquire',
-      username: 'lpasquire',
+      username: 'lpasquier',
       password: 'secret'
     }
     cy.request('POST', 'http://localhost:3003/api/users', user)
@@ -21,7 +21,7 @@ describe('Blog app', function () {
 
   describe('Login', function () {
     it('succeeds with correct credentials', function () {
-      cy.get('#username').type('lpasquire')
+      cy.get('#username').type('lpasquier')
       cy.get('#password').type('secret')
       cy.get('#login').click()
 
@@ -29,7 +29,7 @@ describe('Blog app', function () {
     })
 
     it('fails with wrong credentials', function () {
-      cy.get('#username').type('lpasquire')
+      cy.get('#username').type('lpasquier')
       cy.get('#password').type('secrete')
       cy.get('#login').click()
 
@@ -38,5 +38,32 @@ describe('Blog app', function () {
         .should('have.css', 'border-style', 'solid')
     })
   })
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'lpasquier', password: 'secret' })
+    })
+
+    it('A blog can be created', function () {
+      // open the blog form
+      cy.get('.togglable').contains('create blog').click()
+
+      // fill the blog form
+      const blogTitle = 'cypress blog'
+      cy.get('#title').type(blogTitle)
+      cy.get('#author').type('cypress')
+      cy.get('#url').type('localhost')
+
+      // submit the blog form
+      cy.get('button[type="submit"]').contains('create').click()
+
+      // validate blog is added
+      cy.get('.blogs').contains(blogTitle) // match the blog's title
+      cy.get('.success').should('contain', `a new blog '${blogTitle}' added`)
+        .should('have.css', 'color', 'rgb(0, 128, 0)')
+        .should('have.css', 'border-style', 'solid')
+    })
+  })
+
 
 })

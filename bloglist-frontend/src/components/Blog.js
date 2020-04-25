@@ -38,8 +38,8 @@ const Blog = ({ blog, like, canDeleteBlog, deleteBlog }) => {
   const deleteButton = () => <button onClick={deleteOnConfirm}>delete</button>
 
   return (
-    <div style={blogStyle}>
-      <p>{blog.title}
+    <div className="blogs" style={blogStyle}>
+      <p><span>{blog.title}</span>
         <button onClick={toggleVisibility} style={viewBlog}>view</button>
         <button onClick={toggleVisibility} style={hideBlog}>hide</button>
       </p>
