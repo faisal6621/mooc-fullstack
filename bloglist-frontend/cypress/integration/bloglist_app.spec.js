@@ -9,7 +9,7 @@ describe('Blog app', function () {
       username: 'lpasquier',
       password: 'secret'
     }
-    cy.request('POST', 'http://localhost:3003/api/users', user)
+    cy.registerUser(user)
 
     //visit the homepage
     cy.visit('http://localhost:3000')
@@ -83,6 +83,37 @@ describe('Blog app', function () {
       cy.get('.success').should('contain', `'${firstBlog}' updated, likes`)
         .should('have.css', 'color', 'rgb(0, 128, 0)')
         .should('have.css', 'border-style', 'solid')
+    })
+
+    it('user can delete his blog', function () {
+      // get reference of the blog
+      const firstBlog = 'first blog'
+      cy.get('.blogs').contains(firstBlog).parentsUntil('.blog').as('theBlog')
+      // expand the blog content
+      cy.get('@theBlog').get('.summary').contains('view').click()
+      // delete the blog
+      cy.get('@theBlog').get('.blogContent').contains('delete').click()
+
+      // validate blog is deleted
+      cy.get('.success').should('contain', `'${firstBlog}' is deleted successfully`)
+        .should('have.css', 'color', 'rgb(0, 128, 0)')
+        .should('have.css', 'border-style', 'solid')
+    })
+
+    it('user can not delete others blog', function () {
+      // register a new user
+      const newUser = {
+        name: 'Alex Telal',
+        username: 'atelal',
+        password: 'password'
+      }
+      cy.registerUser(newUser)
+      // login with the new user
+      cy.login(newUser)
+
+      // validate the delete button is not present for existing blog
+      cy.get('.blogs').contains('first blog').parentsUntil('.blog').as('theBlog')
+      cy.get('@theBlog').get('.blogContent').should('not.contain', 'delete')
     })
   })
 

@@ -14,6 +14,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test (non-watch)": "CI=true npm test",
+    "test:e2e": "cypress run",
     "cypress:open": "cypress open",
     "eject": "react-scripts eject",
     "eslint": "eslint ."

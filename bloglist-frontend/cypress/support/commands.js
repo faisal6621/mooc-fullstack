@@ -1,4 +1,10 @@
 // https://on.cypress.io/custom-commands
+Cypress.Commands.add('registerUser', ({ name, username, password }) => {
+  cy.request('POST', 'http://localhost:3003/api/users', {
+    name, username, password
+  })
+})
+
 Cypress.Commands.add('login', ({ username, password }) => {
   cy.request('POST', 'http://localhost:3003/api/login', { username, password })
     .then(({ body }) => {
@@ -15,5 +21,6 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
     body: { title, author, url }
   })
 
+  // visit the homepage
   cy.visit('http://localhost:3000')
 })
