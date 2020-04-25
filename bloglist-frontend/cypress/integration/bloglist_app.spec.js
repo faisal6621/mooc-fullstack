@@ -39,9 +39,15 @@ describe('Blog app', function () {
     })
   })
 
-  describe('When logged in', function () {
+  describe.only('When logged in', function () {
     beforeEach(function () {
+      // login default user
       cy.login({ username: 'lpasquier', password: 'secret' })
+
+      // create some random blog entries
+      cy.createBlog({ title: 'first blog', author: 'cypress', url: 'localhost' })
+      cy.createBlog({ title: 'second blog', author: 'cypress', url: 'localhost' })
+      cy.createBlog({ title: 'third blog', author: 'cypress', url: 'localhost' })
     })
 
     it('A blog can be created', function () {
@@ -60,6 +66,21 @@ describe('Blog app', function () {
       // validate blog is added
       cy.get('.blogs').contains(blogTitle) // match the blog's title
       cy.get('.success').should('contain', `a new blog '${blogTitle}' added`)
+        .should('have.css', 'color', 'rgb(0, 128, 0)')
+        .should('have.css', 'border-style', 'solid')
+    })
+
+    it('user can like a blog', function () {
+      // get reference of the blog
+      const firstBlog = 'first blog'
+      cy.get('.blogs').contains(firstBlog).parentsUntil('.blog').as('theBlog')
+      // expand the blog content
+      cy.get('@theBlog').get('.summary').contains('view').click()
+      // like the blog
+      cy.get('@theBlog').get('.blogContent').contains('like').click()
+
+      // validate blog is liked
+      cy.get('.success').should('contain', `'${firstBlog}' updated, likes`)
         .should('have.css', 'color', 'rgb(0, 128, 0)')
         .should('have.css', 'border-style', 'solid')
     })
