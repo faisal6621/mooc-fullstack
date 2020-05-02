@@ -45,7 +45,7 @@ const Blog = ({ blog, like, canDeleteBlog, deleteBlog }) => {
       </p>
       <p style={hideBlog} className="blogContent">
         {blog.url}<br />
-        likes: {blog.likes} <button onClick={updateLike}>like</button><br />
+        likes: <span className="likes">{blog.likes}</span> <button onClick={updateLike}>like</button><br />
         {blog.author}<br />
         {canDeleteBlog && deleteButton()}
       </p>

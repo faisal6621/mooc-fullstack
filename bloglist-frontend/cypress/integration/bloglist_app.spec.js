@@ -39,15 +39,17 @@ describe('Blog app', function () {
     })
   })
 
-  describe.only('When logged in', function () {
+  describe('When logged in', function () {
     beforeEach(function () {
       // login default user
       cy.login({ username: 'lpasquier', password: 'secret' })
 
       // create some random blog entries
       cy.createBlog({ title: 'first blog', author: 'cypress', url: 'localhost' })
-      cy.createBlog({ title: 'second blog', author: 'cypress', url: 'localhost' })
-      cy.createBlog({ title: 'third blog', author: 'cypress', url: 'localhost' })
+      cy.createBlog({ title: 'second blog', author: 'cypress', url: 'localhost', likes: 1 })
+      cy.createBlog({ title: 'third blog', author: 'cypress', url: 'localhost', likes: 2 })
+
+      cy.get('.blogs').contains('first blog').parent().parent().as('firstBlog')
     })
 
     it('A blog can be created', function () {
@@ -71,13 +73,11 @@ describe('Blog app', function () {
     })
 
     it('user can like a blog', function () {
-      // get reference of the blog
       const firstBlog = 'first blog'
-      cy.get('.blogs').contains(firstBlog).parentsUntil('.blog').as('theBlog')
       // expand the blog content
-      cy.get('@theBlog').get('.summary').contains('view').click()
+      cy.get('@firstBlog').contains('view').click()
       // like the blog
-      cy.get('@theBlog').get('.blogContent').contains('like').click()
+      cy.get('@firstBlog').contains('like').click()
 
       // validate blog is liked
       cy.get('.success').should('contain', `'${firstBlog}' updated, likes`)
@@ -86,13 +86,11 @@ describe('Blog app', function () {
     })
 
     it('user can delete his blog', function () {
-      // get reference of the blog
       const firstBlog = 'first blog'
-      cy.get('.blogs').contains(firstBlog).parentsUntil('.blog').as('theBlog')
       // expand the blog content
-      cy.get('@theBlog').get('.summary').contains('view').click()
+      cy.get('@firstBlog').contains('view').click()
       // delete the blog
-      cy.get('@theBlog').get('.blogContent').contains('delete').click()
+      cy.get('@firstBlog').contains('delete').click()
 
       // validate blog is deleted
       cy.get('.success').should('contain', `'${firstBlog}' is deleted successfully`)
@@ -112,10 +110,19 @@ describe('Blog app', function () {
       cy.login(newUser)
 
       // validate the delete button is not present for existing blog
-      cy.get('.blogs').contains('first blog').parentsUntil('.blog').as('theBlog')
-      cy.get('@theBlog').get('.blogContent').should('not.contain', 'delete')
+      cy.get('@firstBlog').should('not.contain', 'delete')
     })
-  })
 
+    it('the blogs are sorted', function () {
+      let blogLikes = [2, 1, 0]
+      cy.get('.blog').each(($blog, $idx) => {
+        cy.wrap($blog)
+          .get('.blogContent')
+          .get('.likes')
+          .should('contain.text', blogLikes[$idx])
+      })
+    })
+
+  })
 
 })

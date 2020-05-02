@@ -13,12 +13,12 @@ Cypress.Commands.add('login', ({ username, password }) => {
     })
 })
 
-Cypress.Commands.add('createBlog', ({ title, author, url }) => {
+Cypress.Commands.add('createBlog', ({ title, author, url, likes }) => {
   cy.request({
     method: 'POST',
     url: 'http://localhost:3003/api/blogs',
     headers: { Authorization: `bearer ${JSON.parse(localStorage.getItem('user')).token}` },
-    body: { title, author, url }
+    body: { title, author, url, likes }
   })
 
   // visit the homepage
