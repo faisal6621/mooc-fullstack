@@ -5,4 +5,4 @@ ignore: {}
 patch:
   SNYK-JS-LODASH-567746:
     - react-scripts > jest-environment-jsdom-fourteen > @jest/environment > @jest/transform > @babel/core > lodash:
-        patched: '2020-09-24T07:03:27.921Z'
+        patched: '2020-09-24T07:03:45.420Z'
