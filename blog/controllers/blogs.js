@@ -1,7 +1,16 @@
-const blogsRouter = require('express').Router()
+const express = require('express')
+const RateLimit = require('express-rate-limit')
+const mongoSanitize = require('express-mongo-sanitize');
+const blogsRouter = express.Router()
+const app = express()
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
+const limiter = new RateLimit({ windowMs: 1 * 60 * 1000, max: 5 })
+
+app.disable("x-powered-by")
+app.use(limiter)
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
@@ -45,6 +54,8 @@ blogsRouter.put('/:id', async (request, response, next) => {
     const blogToUpdate = {
       likes: request.body.likes ? request.body.likes : 0,
     }
+
+    mongoSanitize.sanitize(blogToUpdate)
 
     const blog = await Blog.findByIdAndUpdate(request.params.id, blogToUpdate, { new: true })
     response.json(blog)
