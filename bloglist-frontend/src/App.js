@@ -17,11 +17,11 @@ const App = () => {
   const [msgType, setMsgType] = useState('')
 
   useEffect(() => {
-    const loggedUser = window.localStorage.getItem('user')
+    let loggedUser = window.localStorage.getItem('user')
     if (loggedUser) {
-      const user = JSON.parse(loggedUser)
-      setUser(user)
-      blogsService.setToken(user.token)
+      loggedUser = JSON.parse(loggedUser)
+      setUser(loggedUser)
+      blogsService.setToken(loggedUser.token)
     }
   }, [])
 
@@ -43,14 +43,14 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({ username, password })
-      if (user !== null) {
-        setUser(user)
+      const loggedUser = await loginService.login({ username, password })
+      if (loggedUser !== null) {
+        setUser(loggedUser)
         setUsername('')
         setPassword('')
 
-        window.localStorage.setItem('user', JSON.stringify(user))
-        blogsService.setToken(user.token)
+        window.localStorage.setItem('user', JSON.stringify(loggedUser))
+        blogsService.setToken(loggedUser.token)
       }
     } catch (error) {
       console.error(error)
@@ -67,8 +67,8 @@ const App = () => {
 
   const getUsersBlogs = async () => {
     try {
-      const blogs = await blogsService.getUsersBlogs()
-      setBlogs(blogs)
+      const usersBlogs = await blogsService.getUsersBlogs()
+      setBlogs(usersBlogs)
     } catch (error) {
       console.error(error)
       setMessage(error.response.data.error)
@@ -97,7 +97,7 @@ const App = () => {
   const likeBlog = async (blog) => {
     try {
       const updatedBlog = await blogsService.updateBlogLikes(blog)
-      setBlogs(blogs.filter(blog => blog.id !== updatedBlog.id).concat(updatedBlog))
+      setBlogs(blogs.filter(theBlog => theBlog.id !== updatedBlog.id).concat(updatedBlog))
 
       setMessage(`'${updatedBlog.title}' updated, likes ${updatedBlog.likes}`)
       setMsgType('success')
