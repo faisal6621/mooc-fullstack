@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import loginService from './services/login'
 import blogsService from './services/blogs'
 import Togglable from './components/Togglable'
@@ -7,13 +7,14 @@ import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import { setNotification, clearNotification } from './reducers/notificationReducer'
+import { setBlogs, addBlog as rxAddBlog, updateBlog, deleteBlog as rxDeleteBlog } from './reducers/blogsReducer'
 
 const blogFormRef = React.createRef()
 
 const App = () => {
   const dispatch = useDispatch()
+  const blogs = useSelector(store => store.blogs)
 
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -61,7 +62,7 @@ const App = () => {
   const getUsersBlogs = async () => {
     try {
       const usersBlogs = await blogsService.getUsersBlogs()
-      setBlogs(usersBlogs)
+      dispatch(setBlogs(usersBlogs))
     } catch (error) {
       console.error(error)
       dispatch(setNotification(error.response.data.error, 'error'))
@@ -72,7 +73,7 @@ const App = () => {
   const addBlog = async (blog) => {
     try {
       const newBlog = await blogsService.addNewBlog(blog)
-      setBlogs(blogs.concat(newBlog))
+      dispatch(rxAddBlog(newBlog))
 
       dispatch(setNotification(`a new blog '${blog.title}' added`, 'success'))
       hideNotification(5)
@@ -90,7 +91,7 @@ const App = () => {
   const likeBlog = async (blog) => {
     try {
       const updatedBlog = await blogsService.updateBlogLikes(blog)
-      setBlogs(blogs.filter(theBlog => theBlog.id !== updatedBlog.id).concat(updatedBlog))
+      dispatch(updateBlog(updatedBlog))
 
       dispatch(setNotification(`'${updatedBlog.title}' updated, likes ${updatedBlog.likes}`, 'success'))
       hideNotification(5)
@@ -104,7 +105,8 @@ const App = () => {
   const deleteBlog = async (blogToDelete) => {
     try {
       await blogsService.deleteBlog(blogToDelete)
-      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+      dispatch(rxDeleteBlog(blogToDelete))
+
       dispatch(setNotification(`'${blogToDelete.title}' is deleted successfully`, 'success'))
       hideNotification(5)
     } catch (error) {
