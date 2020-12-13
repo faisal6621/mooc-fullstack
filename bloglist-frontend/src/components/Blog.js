@@ -29,7 +29,7 @@ const Blog = ({ blog, like, canDeleteBlog, deleteBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: canDeleteBlog ? 'solid' : 'dotted',
+    borderStyle: canDeleteBlog ? 'solid' : 'dotted',
     borderColor: canDeleteBlog ? 'green' : 'black',
     borderWidth: 1,
     marginBottom: 5

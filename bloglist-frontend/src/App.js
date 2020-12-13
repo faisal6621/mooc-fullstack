@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import loginService from './services/login'
 import blogsService from './services/blogs'
 import Togglable from './components/Togglable'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import { setNotification, clearNotification } from './reducers/notificationReducer'
 
 const blogFormRef = React.createRef()
 
 const App = () => {
+  const dispatch = useDispatch()
+
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState('')
-  const [msgType, setMsgType] = useState('')
 
   useEffect(() => {
     let loggedUser = window.localStorage.getItem('user')
@@ -31,15 +33,6 @@ const App = () => {
     }
   }, [user])
 
-  useEffect(() => {
-    if (message) {
-      setTimeout(() => {
-        setMessage('')
-        setMsgType('')
-      }, 5000)
-    }
-  }, [message])
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -54,8 +47,8 @@ const App = () => {
       }
     } catch (error) {
       console.error(error)
-      setMessage(error.response.data.error)
-      setMsgType('error')
+      dispatch(setNotification(error.response.data.error, 'error'))
+      hideNotification(5)
     }
   }
 
@@ -71,8 +64,8 @@ const App = () => {
       setBlogs(usersBlogs)
     } catch (error) {
       console.error(error)
-      setMessage(error.response.data.error)
-      setMsgType('error')
+      dispatch(setNotification(error.response.data.error, 'error'))
+      hideNotification(5)
     }
   }
 
@@ -81,15 +74,15 @@ const App = () => {
       const newBlog = await blogsService.addNewBlog(blog)
       setBlogs(blogs.concat(newBlog))
 
-      setMessage(`a new blog '${blog.title}' added`)
-      setMsgType('success')
+      dispatch(setNotification(`a new blog '${blog.title}' added`, 'success'))
+      hideNotification(5)
 
       blogFormRef.current.toggleVisibility()
       return true
     } catch (error) {
       console.error(error)
-      setMessage(error.response.data.error)
-      setMsgType('error')
+      dispatch(setNotification(error.response.data.error, 'error'))
+      hideNotification(5)
     }
     return false
   }
@@ -99,12 +92,12 @@ const App = () => {
       const updatedBlog = await blogsService.updateBlogLikes(blog)
       setBlogs(blogs.filter(theBlog => theBlog.id !== updatedBlog.id).concat(updatedBlog))
 
-      setMessage(`'${updatedBlog.title}' updated, likes ${updatedBlog.likes}`)
-      setMsgType('success')
+      dispatch(setNotification(`'${updatedBlog.title}' updated, likes ${updatedBlog.likes}`, 'success'))
+      hideNotification(5)
     } catch (error) {
       console.error(error)
-      setMessage(error.response.data.error)
-      setMsgType('error')
+      dispatch(setNotification(error.response.data.error, 'error'))
+      hideNotification(5)
     }
   }
 
@@ -112,13 +105,21 @@ const App = () => {
     try {
       await blogsService.deleteBlog(blogToDelete)
       setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-      setMessage(`'${blogToDelete.title}' is deleted successfully`)
-      setMsgType('success')
+      dispatch(setNotification(`'${blogToDelete.title}' is deleted successfully`, 'success'))
+      hideNotification(5)
     } catch (error) {
       console.error(error)
-      setMessage(error.response.data.error)
-      setMsgType('error')
+      dispatch(setNotification(error.response.data.error, 'error'))
+      hideNotification(5)
     }
+  }
+
+  /**
+   * 
+   * @param {number} duration time to hide notification in seconds
+   */
+  const hideNotification = (duration) => {
+    setTimeout(() => dispatch(clearNotification()), duration * 1000)
   }
 
   const loginForm = () =>
@@ -152,7 +153,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={message} type={msgType} />
+      <Notification />
       {user === null
         ? loginForm()
         : userBlogs()}
